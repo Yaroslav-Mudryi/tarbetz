@@ -456,7 +456,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @forelse($matches_from_odd as $item)
+                                @forelse($matches as $item)
                                     <tr>
                                         <td class="text-center">
                                             <input type="checkbox" id="chk-{{ $item->key }}" data-level="2"

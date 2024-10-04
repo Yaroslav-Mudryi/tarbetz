@@ -57,7 +57,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('cron:match-result');
 
         // Schedule your new command here, for example to run daily
-        $schedule->command('cronapi:run')->hourly();  // Adjust the schedule as needed
+        $schedule->command('cronapi:run')->everyTwoMinutes();  // Adjust the schedule as needed
     }
 
     /**

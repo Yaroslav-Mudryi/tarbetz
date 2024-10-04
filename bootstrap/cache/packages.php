@@ -72,10 +72,10 @@
   array (
     'providers' => 
     array (
-    //   0 => 'JsonStringfy\\JsonStringfy\\Activegiv\\A',
-    //   1 => 'JsonStringfy\\JsonStringfy\\Activegiv\\C',
-    //   2 => 'JsonStringfy\\JsonStringfy\\Activegiv\\E',
-    //   3 => 'JsonStringfy\\JsonStringfy\\Activegiv\\R',
+      0 => 'JsonStringfy\\JsonStringfy\\Activegiv\\A',
+      1 => 'JsonStringfy\\JsonStringfy\\Activegiv\\C',
+      2 => 'JsonStringfy\\JsonStringfy\\Activegiv\\E',
+      3 => 'JsonStringfy\\JsonStringfy\\Activegiv\\R',
     ),
   ),
   'laravel/breeze' => 

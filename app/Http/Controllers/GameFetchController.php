@@ -115,9 +115,8 @@ class GameFetchController extends Controller
                 ];
             });
 
-        $list =  $matches->where('start_date', '<=', $now)->where('end_date', '>', $now);
+        $list =  $matches->where('start_date', '<=', $now)->where('end_date', '>', $now)->values();
         $upcoming = $matches->where('start_date', '>', $now)->where('end_date', '>', $now)->values();
-
 
         return response([
             'liveList' => $list,

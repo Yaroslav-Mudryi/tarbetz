@@ -28,6 +28,8 @@ class CronAPI extends Command
         $this->info('Started at: ' . $start_time);
 
         // Reset statuses
+
+        $this->info('Resetting statuses...');
         GameMatch::where('status',1)->where('end_date', '<', $start_time)->get()->map(function ($item){
             $item->status = 2;
             $item->save();
@@ -79,6 +81,18 @@ class CronAPI extends Command
         $this->info("Duration: " . $start_time->diff($end_time)->format('%H:%I:%S'));
     }
 
+    private function fetchOdds($eventId)
+    {
+        $oddsResponse = Http::get("https://api.b365api.com/v2/event/odds", [
+            'token' => env('BETFAIR_API_KEY'),
+            'event_id' => $eventId,
+        ]);
+
+        $oddsData = json_decode($oddsResponse->body(), true);
+
+        return $oddsData['results']['odds'] ?? [];
+    }
+
     private function processEvents($url, $type, $sportId, $eventTypeId)
     {
         $eventsResponse = Http::get($url, [
@@ -95,6 +109,8 @@ class CronAPI extends Command
         }
 
         foreach ($events['results'] as $event) {
+            $this->info('sport_id: '. $sportId);
+
             $this->info("Processing " . ucfirst($type) . " Event: " . $event['home']['name'] . " vs " . $event['away']['name']);
 
             // Update or create tournament
@@ -134,15 +150,15 @@ class CronAPI extends Command
                 'team1_id' => $event['home']['id'],
                 'team2_id' => $event['away']['id'],
                 'start_date' => Carbon::createFromTimestamp($event['time'])->toDateTimeString(),
-                'end_date' => Carbon::createFromTimestamp($event['time'])->toDateTimeString(),
+                'end_date' => Carbon::createFromTimestamp($event['time'])->addDay()->toDateTimeString(),
                 'category_id' => $sportId,
                 'tournament_id' => $event['league']['id'],
                 'status' => 1,
-                'is_unlock' => 1,
+                'is_unlock' => 0,
             ]);
 
             // Fetch and save odds
-            $oddsData = $this->fetchOdds($event['id']);
+            $oddsData = $this->fetchOdds($event['our_event_id']);
 
             if (!empty($oddsData)) {
                 foreach ($oddsData as $marketKey => $marketOdds) {
@@ -184,17 +200,7 @@ class CronAPI extends Command
         }
     }
 
-    private function fetchOdds($eventId)
-    {
-        $oddsResponse = Http::get("https://api.b365api.com/v2/event/odds", [
-            'token' => env('BETFAIR_API_KEY'),
-            'event_id' => $eventId,
-        ]);
 
-        $oddsData = json_decode($oddsResponse->body(), true);
-
-        return $oddsData['results']['odds'] ?? [];
-    }
 
     private function getOptionNames($marketKey)
     {
